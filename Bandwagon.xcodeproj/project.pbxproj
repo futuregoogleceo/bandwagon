@@ -405,6 +405,7 @@
 				49BA94181A58CB4D00820DEC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		49BA94191A58CB4D00820DEC /* Build configuration list for PBXNativeTarget "BandwagonTests" */ = {
 			isa = XCConfigurationList;
@@ -413,6 +414,7 @@
 				49BA941B1A58CB4D00820DEC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

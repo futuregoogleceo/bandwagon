@@ -15,13 +15,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        var types = UIUserNotificationType.Alert | UIUserNotificationType.Badge;
+        var settings = application.currentUserNotificationSettings();
+        if( settings.types != types ) {
+            settings = UIUserNotificationSettings(forTypes: types, categories: nil);
+            application.registerUserNotificationSettings(settings);
+        }
+
+        
+        application.registerForRemoteNotifications();
+        
         return true
     }
 
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+        var note = UILocalNotification();
+        
+        note.alertBody = "EXCITING SPORTS SHIT IS HAPPENING! WATCH NOW!";
+        note.fireDate = NSDate(timeIntervalSinceNow: 2);
+        note.hasAction = true;
+        note.alertAction = "GO NOW!";
+        
+        application.scheduleLocalNotification(note);
     }
 
     func applicationDidEnterBackground(application: UIApplication) {
@@ -41,6 +58,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
+    func didRegisterUserNotificationSettings(application: UIApplication, notificationSettings: UIUserNotificationSettings) {
+        application.registerForRemoteNotifications();
+    }
 
 }
 
