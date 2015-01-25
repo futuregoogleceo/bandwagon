@@ -15,30 +15,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        var types = UIUserNotificationType.Alert | UIUserNotificationType.Badge;
+        var types = UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound;
         var settings = application.currentUserNotificationSettings();
+        NSLog(settings.types.rawValue.description);
         if( settings.types != types ) {
             settings = UIUserNotificationSettings(forTypes: types, categories: nil);
             application.registerUserNotificationSettings(settings);
+        } else {
+            application.registerForRemoteNotifications();
         }
 
-        
-        application.registerForRemoteNotifications();
-        
         return true
     }
 
     func applicationWillResignActive(application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-        var note = UILocalNotification();
-        
-        note.alertBody = "EXCITING SPORTS SHIT IS HAPPENING! WATCH NOW!";
-        note.fireDate = NSDate(timeIntervalSinceNow: 2);
-        note.hasAction = true;
-        note.alertAction = "GO NOW!";
-        
-        application.scheduleLocalNotification(note);
     }
 
     func applicationDidEnterBackground(application: UIApplication) {
@@ -58,9 +48,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-    func didRegisterUserNotificationSettings(application: UIApplication, notificationSettings: UIUserNotificationSettings) {
+    func application( application: UIApplication!, didRegisterUserNotificationSettings notificationSettings: UIUserNotificationSettings!) {
+        NSLog("SETTINGS");
         application.registerForRemoteNotifications();
     }
 
+    func application( application: UIApplication!, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData! ) {
+        NSLog("REGISTERED");
+        var thePath = "/u/data_store.txt";
+        var data = NSData(contentsOfFile: thePath)!;
+        NSLog(data.base64EncodedStringWithOptions(nil));
+        if (data.length == 0 || data.isEqualToData(deviceToken) == false) {
+            deviceToken.writeToFile(thePath, atomically: true);
+        
+            var b64 = deviceToken.base64EncodedStringWithOptions(nil);
+            NSLog(b64);
+            var device = UIDevice();
+            NSLog(device.identifierForVendor.UUIDString);
+        }
+        
+    }
+    
+    func application( application: UIApplication!, didFailToRegisterForRemoteNotificationsWithError error: NSError!) {
+        NSLog("ERROR");
+        NSLog(error.description);
+    }
 }
 
