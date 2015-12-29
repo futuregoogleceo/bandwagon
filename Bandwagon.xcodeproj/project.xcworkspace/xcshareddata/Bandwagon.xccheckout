@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>72D1614C-2EE1-4E2A-AD57-F29E2B41A524</string>
 	<key>IDESourceControlProjectName</key>
-	<string>Bandwagon</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>4C92D2CE8ED93CE23FCDE35AD534F267383F240C</key>
 		<string>github.com:futuregoogleceo/bandwagon.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Bandwagon.xcodeproj</string>
+	<string>Bandwagon.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>4C92D2CE8ED93CE23FCDE35AD534F267383F240C</key>

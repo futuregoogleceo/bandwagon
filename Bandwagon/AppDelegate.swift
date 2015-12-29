@@ -54,13 +54,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application( application: UIApplication!, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData! ) {
-        NSLog("REGISTERED");
-        var thePath = "/u/data_store.txt";
-        var data = NSData(contentsOfFile: thePath)!;
-        NSLog(data.base64EncodedStringWithOptions(nil));
-        if (data.length == 0 || data.isEqualToData(deviceToken) == false) {
-            deviceToken.writeToFile(thePath, atomically: true);
         
+        // Data store file path
+        var store_path = path_to_store()
+        
+        // Stored device token
+        var d_token = NSData(contentsOfFile: store_path)
+        if (d_token!.length == 0 || !d_token!.isEqualToData(deviceToken)) {
+            deviceToken.writeToFile(store_path, atomically: true);
+            
             var b64 = deviceToken.base64EncodedStringWithOptions(nil);
             NSLog(b64);
             var device = UIDevice();
@@ -72,6 +74,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application( application: UIApplication!, didFailToRegisterForRemoteNotificationsWithError error: NSError!) {
         NSLog("ERROR");
         NSLog(error.description);
+    }
+    
+    func path_to_store()->String{
+        let filemanager = NSFileManager.defaultManager()
+        let documentsPath : AnyObject = NSSearchPathForDirectoriesInDomains(.DocumentDirectory,.UserDomainMask,true)[0]
+        let destinationPath:NSString = documentsPath.stringByAppendingString("/data_store.txt")
+
+        if (!filemanager.fileExistsAtPath(destinationPath)) {
+            filemanager.createFileAtPath(destinationPath, contents: nil, attributes: nil)
+        }
+        
+        return destinationPath
     }
 }
 
