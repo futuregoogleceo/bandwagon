@@ -15,12 +15,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        var types = UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound;
-        var settings = application.currentUserNotificationSettings();
-        NSLog(settings.types.rawValue.description);
-        if( settings.types != types ) {
-            settings = UIUserNotificationSettings(forTypes: types, categories: nil);
-            application.registerUserNotificationSettings(settings);
+        let want_settings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil);
+        let curr_settings = application.currentUserNotificationSettings();
+        NSLog((curr_settings?.types.rawValue.description)!);
+        if( curr_settings?.types != want_settings.types ) {
+            application.registerUserNotificationSettings(want_settings);
         } else {
             application.registerForRemoteNotifications();
         }
@@ -48,26 +47,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-    func application( application: UIApplication!, didRegisterUserNotificationSettings notificationSettings: UIUserNotificationSettings!) {
+    func application( application: UIApplication, didRegisterUserNotificationSettings notificationSettings: UIUserNotificationSettings) {
         NSLog("SETTINGS");
         application.registerForRemoteNotifications();
     }
 
-    func application( application: UIApplication!, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData! ) {
+    func application( application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData ) {
         
         // Data store file path
-        var store_path = path_to_store()
+        let store_path = path_to_store()
         
         // Stored device token
-        var d_token = NSData(contentsOfFile: store_path)
+        let d_token = NSData(contentsOfFile: store_path)
         if (d_token!.length == 0 || !d_token!.isEqualToData(deviceToken)) {
             deviceToken.writeToFile(store_path, atomically: true);
             
-            var b64 = deviceToken.base64EncodedStringWithOptions(nil);
+            let b64 = deviceToken.base64EncodedStringWithOptions([]);
+            var bytes = [UInt8](count: deviceToken.length, repeatedValue: 0)
+            deviceToken.getBytes(&bytes, length: deviceToken.length)
+            
+            let hexString = NSMutableString()
+            for byte in bytes {
+                hexString.appendFormat("%02x", UInt(byte))
+            }
+            NSLog(hexString as String);
             NSLog(b64);
-            var device = UIDevice();
-            NSLog(device.identifierForVendor.UUIDString);
+        } else {
+            let b64 = d_token!.base64EncodedStringWithOptions([]);
+            var bytes = [UInt8](count: deviceToken.length, repeatedValue: 0)
+            deviceToken.getBytes(&bytes, length: deviceToken.length)
+            
+            let hexString = NSMutableString()
+            for byte in bytes {
+                hexString.appendFormat("%02x", UInt(byte))
+            }
+            NSLog(hexString as String);
+            NSLog(b64);
         }
+        let device = UIDevice();
+        NSLog(device.identifierForVendor!.UUIDString);
+        NSLog(device.systemVersion);
         
     }
     
@@ -81,11 +100,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let documentsPath : AnyObject = NSSearchPathForDirectoriesInDomains(.DocumentDirectory,.UserDomainMask,true)[0]
         let destinationPath:NSString = documentsPath.stringByAppendingString("/data_store.txt")
 
-        if (!filemanager.fileExistsAtPath(destinationPath)) {
-            filemanager.createFileAtPath(destinationPath, contents: nil, attributes: nil)
+        if (!filemanager.fileExistsAtPath(destinationPath as String)) {
+            filemanager.createFileAtPath(destinationPath as String, contents: nil, attributes: nil)
         }
         
-        return destinationPath
+        return destinationPath as String
     }
 }
 
